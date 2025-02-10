@@ -1,0 +1,439 @@
+{
+	"build": {
+		"family": "RTL8720C",
+		"f_cpu": "100000000L",
+		"prefix": "arm-none-eabi-",
+		"ldscript": "rtl8710c_ram.ld",
+		"mcu": "rtl8720cf",
+		"variant": "bw15"
+	},
+	"flash": {
+		"part_table": "0x000000+0x1000",
+		"system": "0x001000+0x1000",
+		"calibration": "0x002000+0x1000",
+		"boot": "0x004000+0x8000",
+		"ota1": "0x00C000+0xF8000",
+		"ota2": "0x104000+0xF8000",
+		"kvs": "0x1FC000+0x4000"
+	},
+	"debug": {
+		"protocol": "openocd",
+		"protocols": [
+			"openocd"
+		],
+		"openocd_config": "amebaz2.cfg",
+		"gdb_init": [
+			"mem 0x9b000000 0x9c000000 ro",
+			"set mem inaccessible-by-default off"
+		],
+		"tools": {
+			"custom": {
+				"extra_cmds": [
+					"mem 0x9b000000 0x9c000000 ro",
+					"set mem inaccessible-by-default off"
+				]
+			},
+			"openocd": {
+				"server": {
+					"package": "tool-openocd",
+					"executable": "bin/openocd",
+					"arguments": [
+						"-s",
+						"$PACKAGE_DIR/scripts",
+						"-f",
+						"$LTPATH/platform/$LTFAMILY/openocd/amebaz2.cfg"
+					]
+				},
+				"extra_cmds": [
+					"mem 0x9b000000 0x9c000000 ro",
+					"set mem inaccessible-by-default off"
+				],
+				"default": true
+			}
+		}
+	},
+	"upload": {
+		"maximum_ram_size": 262144,
+		"protocol": "uart",
+		"protocols": [
+			"uart"
+		],
+		"flash_size": 2097152,
+		"maximum_size": 1015808
+	},
+	"doc": {
+		"params": {
+			"manufacturer": "Realtek",
+			"series": "AmebaZ2",
+			"voltage": "3.0V - 3.6V",
+			"extra": {
+				"Wi-Fi": "802.11 b/g/n",
+				"BLE": "v4.2"
+			}
+		},
+		"links": {
+			"General info": "../../docs/platform/realtek-amb/README.md",
+			"Vendor datasheet": "https://docs.ai-thinker.com/_media/rtl8710/docs/bw15_datasheet_en.pdf"
+		},
+		"fccid": "2AXVG-BW15"
+	},
+	"connectivity": [
+		"wifi",
+		"ble"
+	],
+	"image": {
+		"keys": {
+			"decryption": "a0d6dae7e062ca94cbb294bf896b9f68cf8438774256ac7403ca4fd9a1c9564f",
+			"keyblock": {
+				"part_table": "882aa16c8c44a7760aa8c9ab22e3568c6fa16c2afa4f0cea29a10abcdf60e44f",
+				"boot": "882aa16c8c44a7760aa8c9ab22e3568c6fa16c2afa4f0cea29a10abcdf60e44f"
+			},
+			"hash_keys": {
+				"part_table": "47e5661335a4c5e0a94d69f3c737d54f2383791332939753ef24279608f6d72b",
+				"boot": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+				"ota1": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e5f",
+				"ota2": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e5f"
+			},
+			"user_keys": {
+				"boot": "aa0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+				"ota1": "bb0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+				"ota2": "bb0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+			},
+			"xip_sce_key": "a0d6dae7e062ca94cbb294bf896b9f68",
+			"xip_sce_iv": "94879487948794879487948794879487"
+		},
+		"ptable": {
+			"boot": "BOOT",
+			"ota1": "FW1",
+			"ota2": "FW2"
+		},
+		"boot": {
+			"name": "boot.sram",
+			"type": "SRAM",
+			"entry": "__ram_start_table_start__",
+			"elf": [
+				".ram.func.table",
+				".data",
+				".ram.code_text",
+				".ram.code_rodata"
+			],
+			"is_boot": true
+		},
+		"fw": [
+			{
+				"type": "FWHS_S",
+				"sections": [
+					{
+						"name": "fwhs.sram",
+						"type": "SRAM",
+						"entry": "__ram_start_table_start__",
+						"elf": [
+							".ram.img.signature",
+							".ram.func.table",
+							".data",
+							".ram.code_text",
+							".ram.code_rodata"
+						]
+					},
+					{
+						"name": "fwhs.psram",
+						"type": "PSRAM",
+						"entry": "__psram_start__",
+						"elf": [
+							".psram.data",
+							".psram.code_text",
+							".psram.code_rodata"
+						]
+					}
+				]
+			},
+			{
+				"type": "XIP",
+				"sections": [
+					{
+						"name": "fwhs.xip_c",
+						"entry": "XIP_RamImgSignature_s",
+						"type": "XIP",
+						"elf": [
+							".xip.code_c"
+						]
+					}
+				]
+			},
+			{
+				"type": "XIP",
+				"sections": [
+					{
+						"name": "fwhs.xip_p",
+						"entry": "__xip_code_rodata_start__",
+						"type": "XIP",
+						"elf": [
+							".xip.code_p"
+						]
+					}
+				]
+			}
+		]
+	},
+	"pcb": {
+		"ic": {
+			"1": {
+				"C_NAME": "PIN_A20",
+				"GPIO": "PA20",
+				"IRQ": null,
+				"SD": "D1",
+				"SPI": "0_MISO",
+				"UART": "2_RTS",
+				"I2C": "0_SDA",
+				"PWM": 0
+			},
+			"3": {
+				"C_NAME": "PIN_A23",
+				"GPIO": "PA23",
+				"IRQ": null,
+				"PWM": 7
+			},
+			"14": {
+				"IO": "I",
+				"CTRL": "CEN"
+			},
+			"15": {
+				"C_NAME": "PIN_A0",
+				"GPIO": "PA00",
+				"IRQ": null,
+				"JTAG": "TCK",
+				"UART": "1_RX",
+				"PWM": 0,
+				"SWD": "CLK"
+			},
+			"16": {
+				"C_NAME": "PIN_A1",
+				"GPIO": "PA01",
+				"IRQ": null,
+				"JTAG": "TMS",
+				"UART": "1_TX",
+				"PWM": 1,
+				"SWD": "DIO"
+			},
+			"18": {
+				"C_NAME": "PIN_A2",
+				"GPIO": "PA02",
+				"IRQ": null,
+				"JTAG": "TDO",
+				"UART": "1_RX",
+				"SPI": "0_CS",
+				"I2C": "0_SCL",
+				"PWM": 2
+			},
+			"19": {
+				"C_NAME": "PIN_A3",
+				"GPIO": "PA03",
+				"IRQ": null,
+				"JTAG": "TDI",
+				"UART": "1_TX",
+				"SPI": "0_SCK",
+				"I2C": "0_SDA",
+				"PWM": 3
+			},
+			"20": {
+				"C_NAME": "PIN_A4",
+				"GPIO": "PA04",
+				"IRQ": null,
+				"JTAG": "tRST",
+				"UART": "1_CTS",
+				"SPI": "0_MOSI",
+				"PWM": 4
+			},
+			"21": {
+				"C_NAME": "PIN_A7",
+				"GPIO": "PA07",
+				"IRQ": null,
+				"FLASH": "^FCS",
+				"SPI": "0_CS"
+			},
+			"22": {
+				"C_NAME": "PIN_A8",
+				"GPIO": "PA08",
+				"IRQ": null,
+				"FLASH": "FSCK",
+				"SPI": "0_SCK"
+			},
+			"23": {
+				"C_NAME": "PIN_A9",
+				"GPIO": "PA09",
+				"IRQ": null,
+				"FLASH": "FD2",
+				"SPI": "0_MOSI",
+				"UART": "0_RTS"
+			},
+			"24": {
+				"C_NAME": "PIN_A10",
+				"GPIO": "PA10",
+				"IRQ": null,
+				"FLASH": "FD1",
+				"SPI": "0_MISO",
+				"UART": "0_CTS"
+			},
+			"25": {
+				"C_NAME": "PIN_A11",
+				"GPIO": "PA11",
+				"IRQ": null,
+				"FLASH": "FD0",
+				"UART": "0_TX",
+				"I2C": "0_SCL",
+				"PWM": 0
+			},
+			"26": {
+				"C_NAME": "PIN_A12",
+				"GPIO": "PA12",
+				"IRQ": null,
+				"FLASH": "FD3",
+				"UART": "0_RX",
+				"I2C": "0_SDA",
+				"PWM": 1
+			},
+			"30": {
+				"IO": "I",
+				"C_NAME": "VBAT_IN"
+			},
+			"33": {
+				"C_NAME": "PIN_A13",
+				"GPIO": "PA13",
+				"IRQ": null,
+				"UART": "0_RX",
+				"PWM": 7
+			},
+			"34": {
+				"C_NAME": "PIN_A14",
+				"GPIO": "PA14",
+				"IRQ": null,
+				"SD": "INT",
+				"UART": "0_TX",
+				"PWM": 2
+			},
+			"36": {
+				"C_NAME": "PIN_A15",
+				"GPIO": "PA15",
+				"IRQ": null,
+				"SD": "D2",
+				"SPI": "0_CS",
+				"UART": "2_RX",
+				"I2C": "0_SCL",
+				"PWM": 3
+			},
+			"37": {
+				"C_NAME": "PIN_A16",
+				"GPIO": "PA16",
+				"IRQ": null,
+				"SD": "D3",
+				"SPI": "0_SCK",
+				"UART": "2_TX",
+				"I2C": "0_SDA",
+				"PWM": 4
+			},
+			"38": {
+				"C_NAME": "PIN_A17",
+				"GPIO": "PA17",
+				"IRQ": null,
+				"SD": "CMD",
+				"PWM": 5
+			},
+			"39": {
+				"C_NAME": "PIN_A18",
+				"GPIO": "PA18",
+				"IRQ": null,
+				"SD": "CLK",
+				"PWM": 6
+			},
+			"40": {
+				"C_NAME": "PIN_A19",
+				"GPIO": "PA19",
+				"IRQ": null,
+				"SD": "D0",
+				"SPI": "0_MOSI",
+				"UART": "2_CTS",
+				"I2C": "0_SCL",
+				"PWM": 7
+			}
+		},
+		"templates": [
+			"esp12s",
+			"pcb-black",
+			"rf-type1"
+		],
+		"pinout_hidden": "I2S,TRIG,WAKE,CTS,RTS,SD",
+		"pinout": {
+			"1": {
+				"IC": 38,
+				"ARD": "D0"
+			},
+			"2": {
+				"IC": 39,
+				"ARD": "D1"
+			},
+			"3": {
+				"IC": 14
+			},
+			"4": {
+				"IC": 18,
+				"ARD": "D2"
+			},
+			"5": {
+				"IC": 36,
+				"ARD": "D3"
+			},
+			"6": {
+				"IC": 20,
+				"ARD": "D4"
+			},
+			"7": {
+				"IC": 40,
+				"ARD": "D5"
+			},
+			"8": {
+				"PWR": 3.3
+			},
+			"9": {
+				"GND": null
+			},
+			"10": {
+				"IC": 1,
+				"ARD": "D6"
+			},
+			"11": {
+				"IC": 37,
+				"ARD": "D7"
+			},
+			"12": {
+				"IC": 15,
+				"ARD": "D8"
+			},
+			"13": {
+				"IC": 19,
+				"ARD": "D9"
+			},
+			"14": {
+				"IC": 16,
+				"ARD": "D10"
+			},
+			"15": {
+				"IC": 33,
+				"ARD": "D11"
+			},
+			"16": {
+				"IC": 34,
+				"ARD": "D12"
+			}
+		},
+		"symbol": "BW15"
+	},
+	"name": "BW15",
+	"url": "https://docs.ai-thinker.com/_media/rtl8710/docs/bw15_datasheet_en.pdf",
+	"vendor": "Ai-Thinker Co., Ltd.",
+	"platform": "libretiny",
+	"frameworks": [
+		"base",
+		"arduino"
+	],
+	"package": "framework-realtek-ambz2"
+}
