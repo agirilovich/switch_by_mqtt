@@ -12,38 +12,13 @@
 #undef HA_TOPIC_HEAD
 #define HA_TOPIC_HEAD MQTT_GENERAL_PREFIX
 
-struct ValveData
-{
-    float mix_valve_state;
-    float mix_valve_openLevel;
-    float mix_valve_type;
-    float mix_valve_temp_set;
-    float mix_valve_temp;
-    float mix_valve_pump;
-};
-
 struct SensorsData
 {
-  char device_time[32];
-  float device_state;
-  float ext_temp;
-  float co_temp;
-  float co_temp_ret;
-  float cwu_temp;
-  float cwu_temp_set;
-  float pump_state_co;
-  float pump_state_cwu;
-
-  ValveData valveData[2];
-
-  float pump_mode;
+  bool no_switch;
+  int varistor;
 };
 
 void initMQTT();
-
-bool MQTTpublish(struct SensorsData* SensorsCurrentValues);
-
-void MQTTMessageCallback(HAEntity *entity, char *topic, byte *payload, unsigned int length);
 
 void MQTTLoop();
 
