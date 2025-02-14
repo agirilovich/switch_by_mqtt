@@ -13,4 +13,4 @@ Alhough there are many great solutions based on ESP32 controller, my goal is to 
 * Auto-discovery is used for automatic configuration of switch object in HomeAssistant
 
 
-![Device schematic](xxx.png)
+![Device schematic](schematic.png)
