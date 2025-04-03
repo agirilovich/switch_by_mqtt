@@ -20,7 +20,7 @@ static int ud_port_pin = 2;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Start");
 
   Serial.print("Start WiFi on ");
