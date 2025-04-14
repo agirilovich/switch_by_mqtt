@@ -20,6 +20,8 @@ struct SensorsData
 
 void initMQTT();
 
-void MQTTLoop();
+bool MQTTgetstate();
+
+struct SensorsData MQTTLoop();
 
 

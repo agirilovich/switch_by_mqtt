@@ -34,7 +34,6 @@ void printWifiStatus()
 void initializeWiFi(const char *device_name)
 {
   WiFi.mode(WIFI_STA);
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   
   char fqdn[13];
   strcpy(fqdn, device_name);
@@ -47,7 +46,6 @@ void establishWiFi()
   
   WiFi.disconnect(); // to clear the way. not persistent
   WiFi.enableAP(false); // to disable default automatic start of persistent AP at startup
-  WiFi.setAutoConnect(true);
 
   Serial.print("Connecting to SSID: ");
   Serial.println(ssid);
@@ -63,6 +61,4 @@ void establishWiFi()
     Serial.print(".");
   }
   Serial.println("WiFi shield init done");
-  configTime(0, 0, NTP_SERVER);
-  setTimezone("CET-1CEST,M3.5.0,M10.5.0/3"); // Europe/Warsaw
 }

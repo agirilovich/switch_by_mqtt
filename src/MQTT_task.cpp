@@ -33,8 +33,9 @@ void ha_callback(HAEntity *entity, char *topic, byte *payload, unsigned int leng
 
 void initMQTT() {
   //Initialise MQTT autodiscovery topic and sensor
+
   mqtt.setServer(mqtt_host, mqtt_port);
-  HAMQTT.begin(mqtt, 22);
+  HAMQTT.begin(mqtt, 2);
 
   no_switch.addFeature(HA_FEATURE_ICON,"mdi:electric-switch");
   varistor.addFeature(HA_FEATURE_ICON,"mdi:tune-variant");
@@ -43,11 +44,30 @@ void initMQTT() {
   HAMQTT.addEntity(no_switch);
   HAMQTT.addEntity(varistor);
   varistor.setState(0);
+  no_switch.setState(0);
 
   HAMQTT.setCallback(ha_callback);
+
 }
 
-void MQTTLoop()
+struct SensorsData MQTTLoop()
 {
   HAMQTT.loop();
+  return SensorsCurrentValues;
+}
+
+bool MQTTgetstate()
+{
+  if (WiFi.isConnected() && !HAMQTT.connected())
+  {
+    Serial.println("Reconnecting to MQTT server.");
+    if (HAMQTT.connect(DEVICE_BOARD_NAME, mqtt_user, mqtt_pass))
+      Serial.println("Connected to MQTT");
+    else
+    {
+      Serial.println("Failed to connect to MQTT");
+      return(false);
+    }
+  }
+  return(true);
 }
